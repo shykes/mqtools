@@ -11,18 +11,16 @@ subcommands = parser.add_subparsers(dest="command")
 
 parser_consume = subcommands.add_parser("consume", help="consume amqp messages and write them to stdout")
 parser_consume.add_argument("hostname", help="Hostname of the AMQP broker")
-parser_consume.add_argument("--exchange", help="Exchange to use on the AMQP broker")
-parser_consume.add_argument("--queue", help="Queue to use on the AMQP broker")
-parser_consume.add_argument("--key", help="Routing key to use on the AMQP broker", default=None)
+parser_consume.add_argument("queue", help="Queue to use on the AMQP broker")
+parser_consume.add_argument("--exchange", help="Create a fanout exchange and bind it to the queue", default=None)
 parser_consume.add_argument("-u", "--user", help="User for the AMQP broker", default=None)
 parser_consume.add_argument("-p", "--password", help="Password for the AMQP broker", default=None)
 parser_consume.add_argument("-v", "--vhost", help="Virtual host to use on the AMQP broker", default="/")
 parser_consume.add_argument("--ack", help="Acknowledge messages, removing them from the queue", action="store_true")
 
-
 parser_send = subcommands.add_parser("send", help="Read lines from stdin, send them to an amqp broker")
 parser_send.add_argument("hostname", help="Hostname of the AMQP broker")
-parser_send.add_argument("--exchange", help="Exchange to use on the AMQP broker")
+parser_send.add_argument("exchange", help="Exchange to use on the AMQP broker")
 parser_send.add_argument("--key", help="Routing key to use on the AMQP broker")
 parser_send.add_argument("-v", "--vhost", help="Virtual host to use on the AMQP broker", default="/")
 parser_send.add_argument("-u", "--user", help="User for the AMQP broker", default=None)
@@ -39,9 +37,9 @@ def main():
     if args.command == "consume":
         consumer = Consumer(
                 connection      = conn,
+                exchange_type   = "fanout" if args.exchange else None,
                 exchange        = args.exchange,
-                queue           = args.queue,
-                routing_key     = args.key
+                queue           = args.queue
         )
         def display_message(data, msg):
             print str(data)
@@ -51,6 +49,7 @@ def main():
         consumer.wait()
     elif args.command == "send":
         publisher = Publisher(
+                auto_declare    = False,
                 connection      = conn,
                 exchange        = args.exchange,
                 routing_key     = args.key
