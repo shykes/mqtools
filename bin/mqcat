@@ -1,0 +1,6 @@
+#!/usr/bin/env python
+
+import mqcat
+
+if __name__ == "__main__":
+    mqcat.main()
