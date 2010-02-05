@@ -1,7 +1,7 @@
 
 from setuptools import setup
 
-setup(name='mqcat',
+setup(name='mqtools',
       version='0.0.1',
       author='Solomon Hykes <solomon.hykes@dotcloud.com>',
       install_requires=['argparse', 'carrot'],
