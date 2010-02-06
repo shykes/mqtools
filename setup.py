@@ -7,5 +7,5 @@ setup(name='mqtools',
       install_requires=['argparse', 'carrot'],
       package_dir = {'mqcat' : '.'},
       packages=['mqcat'],
-      scripts=['bin/mqcat']
+      scripts=['bin/mqcat', 'bin/mqsniff']
 )
